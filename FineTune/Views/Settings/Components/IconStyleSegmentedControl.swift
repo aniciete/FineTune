@@ -30,28 +30,19 @@ private struct IconOption: View {
 
     var body: some View {
         Button(action: onSelect) {
-            Group {
-                if style.isSystemSymbol {
-                    Image(systemName: style.iconName)
-                        .font(.system(size: 14))
-                } else {
-                    Image(style.iconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 14, height: 14)
+            Image(systemName: style.iconName)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(isSelected ? DesignTokens.Colors.accentPrimary : DesignTokens.Colors.textSecondary)
+                .frame(width: 30, height: 30)
+                .contentShape(Rectangle())
+                .background {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isSelected ? DesignTokens.Colors.accentPrimary.opacity(0.15) : Color.clear)
                 }
-            }
-            .foregroundStyle(isSelected ? DesignTokens.Colors.accentPrimary : DesignTokens.Colors.textSecondary)
-            .frame(width: 30, height: 30)
-            .contentShape(Rectangle())
-            .background {
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isSelected ? DesignTokens.Colors.accentPrimary.opacity(0.15) : Color.clear)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isSelected ? DesignTokens.Colors.accentPrimary : Color.clear, lineWidth: 1.5)
-            }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(isSelected ? DesignTokens.Colors.accentPrimary : Color.clear, lineWidth: 1.5)
+                }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(style.rawValue)
@@ -62,8 +53,8 @@ private struct IconOption: View {
 
 #Preview("Icon Style Segmented Control") {
     VStack(spacing: 16) {
-        IconStyleSegmentedControl(selection: .constant(.default))
         IconStyleSegmentedControl(selection: .constant(.speaker))
+        IconStyleSegmentedControl(selection: .constant(.device))
         IconStyleSegmentedControl(selection: .constant(.equalizer))
     }
     .padding()

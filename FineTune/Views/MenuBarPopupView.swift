@@ -377,9 +377,9 @@ struct MenuBarPopupView: View {
                 .opacity(0.3)
                 .padding(.horizontal, 2)
 
-            // Sound Settings... text link (Image 1)
+            // Sound Settings... text link (macOS System Settings)
             Button {
-                openSettingsWindow()
+                openSystemSoundSettings()
             } label: {
                 Text("Sound Settings...")
                     .font(.system(size: 12.5, weight: .medium))
@@ -390,6 +390,17 @@ struct MenuBarPopupView: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    private func openSystemSoundSettings() {
+        NSApp.keyWindow?.resignKey()
+        if let url = URL(string: "x-apple.systempreferences:com.apple.Sound-Settings.extension") {
+            if !NSWorkspace.shared.open(url) {
+                if let legacyUrl = URL(string: "x-apple.systempreferences:com.apple.preference.sound") {
+                    NSWorkspace.shared.open(legacyUrl)
+                }
+            }
         }
     }
 

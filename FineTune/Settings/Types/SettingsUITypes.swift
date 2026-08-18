@@ -5,7 +5,6 @@ import AppKit
 // MARK: - App-Wide Settings Enums
 
 enum MenuBarIconStyle: String, Codable, CaseIterable, Identifiable {
-    case `default` = "Default"
     case speaker = "Speaker"
     case device = "Device"
     case waveform = "Waveform"
@@ -13,10 +12,9 @@ enum MenuBarIconStyle: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// The icon name - either asset catalog name or SF Symbol
+    /// The icon name (SF Symbol)
     var iconName: String {
         switch self {
-        case .default: return "MenuBarIcon"
         case .speaker: return "speaker.wave.2.fill"
         case .device: return "headphones"
         case .waveform: return "waveform"
@@ -24,15 +22,15 @@ enum MenuBarIconStyle: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Whether this uses an SF Symbol (vs asset catalog image)
+    /// Whether this uses an SF Symbol
     var isSystemSymbol: Bool {
-        self != .default
+        true
     }
 }
 
 // MARK: - HUD Style
 
-/// Style of the on-screen HUD shown when media keys drive FineTune's volume.
+/// Style of the on-screen HUD shown when media keys drive Curv's volume.
 /// `.tahoe` renders a small top-right pill; `.classic` renders a center-bottom panel
 /// with 16 segment tiles matching Apple's pre-Tahoe HUD aesthetic.
 enum HUDStyle: String, Codable, CaseIterable, Identifiable {
@@ -108,21 +106,21 @@ extension MenuBarPopupSize {
         switch self {
         case .compact:
             return PopupDimensions(
-                width: 470,
-                contentPadding: 12,
-                maxContentHeight: 560
+                width: 245,
+                contentPadding: 8,
+                maxContentHeight: 520
             )
         case .comfortable:
             return PopupDimensions(
-                width: 510,
-                contentPadding: 16,
-                maxContentHeight: 660
+                width: 255,
+                contentPadding: 8,
+                maxContentHeight: 580
             )
         case .spacious:
             return PopupDimensions(
-                width: 560,
-                contentPadding: 20,
-                maxContentHeight: 760
+                width: 280,
+                contentPadding: 10,
+                maxContentHeight: 650
             )
         }
     }
