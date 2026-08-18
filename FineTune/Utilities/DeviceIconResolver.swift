@@ -1,5 +1,6 @@
-// FineTune/Utilities/DeviceIconResolver.swift
 import AppKit
+import CoreAudio
+import AudioToolbox
 
 /// Applies the device-icon display precedence:
 /// user override → automatic icon (driver image or suggested SF Symbol).
