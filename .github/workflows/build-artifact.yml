@@ -7,20 +7,26 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: Build App
         run: |
-          xcodebuild -project FineTune.xcodeproj \
+          xcodebuild build \
+            -project FineTune.xcodeproj \
             -scheme FineTune \
             -configuration Release \
             -derivedDataPath ./DerivedData \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY=- \
             CODE_SIGNING_REQUIRED=NO \
-            build
+            CODE_SIGNING_ALLOWED=NO
           
           mkdir -p dist
           APP_PATH=$(find ./DerivedData -name "FineTune.app" -type d | head -n 1)
