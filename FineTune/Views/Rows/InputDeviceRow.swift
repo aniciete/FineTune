@@ -85,19 +85,19 @@ struct InputDeviceRow: View {
     // MARK: - Device Header
 
     private var deviceHeader: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
-            DeviceBadge(icon: displayIcon, isSelected: isDefault, fallbackSymbol: "mic")
+        HStack(spacing: 8) {
+            DeviceBadge(icon: displayIcon, isSelected: isDefault, fallbackSymbol: "mic.fill")
 
             // Device name
             Text(device.name)
-                .font(DesignTokens.Typography.rowName)
+                .font(.system(size: 12.5, weight: isDefault ? .semibold : .regular))
+                .foregroundStyle(isDefault ? DesignTokens.Colors.textPrimary : DesignTokens.Colors.textSecondary)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // Mute button (mic icon)
             InputMuteButton(isMuted: showMutedIcon) {
                 if showMutedIcon {
-                    // Unmute: restore to default if displayed as 0%
                     if displayedPercentage == 0 {
                         sliderValue = defaultUnmuteVolume
                     }
@@ -105,44 +105,43 @@ struct InputDeviceRow: View {
                         onMuteToggle()
                     }
                 } else {
-                    // Mute
                     onMuteToggle()
                 }
             }
 
-            // Volume slider (Liquid Glass)
+            // Volume slider
             LiquidGlassSlider(
                 value: $sliderValue,
                 onEditingChanged: { editing in
                     isEditing = editing
                 }
             )
+            .frame(width: 100)
             .opacity(showMutedIcon ? 0.5 : 1.0)
             .onChange(of: sliderValue) { _, newValue in
-                // Skip write-back when syncing from device (breaks USB DAC quantization spiral)
                 if isUpdatingSliderFromDevice {
                     isUpdatingSliderFromDevice = false
                     return
                 }
                 onVolumeChange(Float(newValue))
-                // Auto-unmute when slider moved while muted
                 if isMuted && newValue > 0 {
                     onMuteToggle()
                 }
             }
             .scrollWheelStep($sliderValue, in: 0.0...1.0)
 
-            // Editable volume percentage
-            EditablePercentage(
-                percentage: Binding(
-                    get: { Int(round(sliderValue * 100)) },
-                    set: { sliderValue = Double($0) / 100.0 }
-                ),
-                range: 0...100,
-                isRowFocused: isFocused
-            )
+            // Active checkmark
+            if isDefault {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 14)
+            } else {
+                Color.clear
+                    .frame(width: 14)
+            }
         }
-        .frame(height: DesignTokens.Dimensions.rowContentHeight)
+        .frame(height: 28)
     }
 }
 

@@ -279,30 +279,48 @@ struct MenuBarPopupView: View {
     // MARK: - Settings Button
 
     private var settingsButton: some View {
-        Button("Settings", systemImage: "gearshape.fill") {
-            openSettingsWindow()
+        Menu {
+            Button("Settings...") {
+                openSettingsWindow()
+            }
+            .keyboardShortcut(",", modifiers: .command)
+
+            Divider()
+
+            Button("Support & Donate...") {
+                NSWorkspace.shared.open(DesignTokens.Links.support)
+            }
+
+            Button("Check for Updates...") {
+                updateManager.checkForUpdates()
+            }
+
+            Divider()
+
+            Button("Quit Curv") {
+                NSApplication.shared.terminate(nil)
+            }
+            .keyboardShortcut("q", modifiers: .command)
+        } label: {
+            Image(systemName: "gearshape.fill")
+                .font(.system(size: 12, weight: .medium))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(DesignTokens.Colors.interactiveDefault)
+                .frame(width: 24, height: 24)
+                .background {
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(Color.primary.opacity(0.06))
+                }
+                .contentShape(Rectangle())
         }
-        .labelStyle(.iconOnly)
-        .buttonStyle(.plain)
-        .font(.system(size: 12, weight: .medium))
-        .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(DesignTokens.Colors.interactiveDefault)
-        .frame(width: 26, height: 26)
-        .background {
-            RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
-                .fill(Color.primary.opacity(0.06))
-        }
-        .contentShape(Rectangle())
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .frame(width: 24, height: 24)
+        .help("Settings & Options")
     }
 
     /// Handles Escape key: closes EQ first, then dismisses the popup.
-    /// Escape order: expanded device detail → edit mode → expanded app EQ →
-    /// popup dismiss. Expanded device detail is checked before
-    /// `isEditingDevicePriority` so Escape collapses the row first rather than
-    /// tearing down edit mode entirely.
     private func handleEscape() {
-        // The hidden Escape keyboardShortcut button can win over `.onKeyPress`, so an
-        // in-progress keyboard entry is cancelled here too.
         if textEntry.buffer != nil {
             textEntry.buffer = nil
             return
@@ -314,7 +332,6 @@ struct MenuBarPopupView: View {
         } else if isEditingDevicePriority {
             toggleDevicePriorityEdit()
         } else if expandedRowID != nil {
-            // Collapse any expanded app EQ panel
             withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                 expandedRowID = nil
             }
@@ -334,60 +351,16 @@ struct MenuBarPopupView: View {
 
     @ViewBuilder
     private func mainContent(scrollProxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+        VStack(alignment: .leading, spacing: 10) {
             // Devices section (tabbed: Output / Input)
             devicesSection
 
-            // Apps section (active + pinned inactive + hidden in edit mode)
+            Divider()
+                .opacity(0.3)
+                .padding(.horizontal, 4)
+
+            // Apps section
             appsSection(scrollProxy: scrollProxy)
-
-            // Footer: support link + quit
-            HStack {
-                Button {
-                    NSWorkspace.shared.open(DesignTokens.Links.support)
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: isSupportHovered ? "heart.fill" : "heart")
-                            .font(.system(size: 11, weight: .semibold))
-                        Text("Donate")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(isSupportHovered ? Color(nsColor: .systemPink) : DesignTokens.Colors.textTertiary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background {
-                    Capsule()
-                        .fill(isSupportHovered ? Color(nsColor: .systemPink).opacity(0.12) : Color.clear)
-                }
-                .onHover { hovering in
-                    withAnimation(DesignTokens.Animation.hover) {
-                        isSupportHovered = hovering
-                    }
-                }
-                .accessibilityLabel("Donate to Curv")
-                .help("Donate to Curv")
-
-                Spacer()
-
-                Button {
-                    NSApplication.shared.terminate(nil)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Quit")
-                        Text("⌘Q")
-                            .foregroundStyle(DesignTokens.Colors.textTertiary)
-                    }
-                }
-                .buttonStyle(.plain)
-                .font(DesignTokens.Typography.caption)
-                .foregroundStyle(DesignTokens.Colors.textSecondary)
-                .glassButtonStyle()
-                .accessibilityLabel("Quit Curv")
-                .help("Quit Curv (⌘Q)")
-            }
-            .padding(.horizontal, 2)
         }
     }
 
@@ -509,7 +482,6 @@ struct MenuBarPopupView: View {
     @ViewBuilder
     private var devicesSection: some View {
         devicesContent
-            .glassIslandCard()
     }
 
     private var devicesContent: some View {
@@ -765,13 +737,10 @@ struct MenuBarPopupView: View {
         } else if isEditingDevicePriority {
             appEditModeContent
                 .padding(DesignTokens.Spacing.sm)
-                .glassIslandCard()
         } else if audioEngine.displayableApps.isEmpty {
             emptyStateView
-                .glassIslandCard()
         } else {
             appsContent(scrollProxy: scrollProxy)
-                .glassIslandCard()
         }
     }
 

@@ -140,83 +140,52 @@ struct DeviceRow: View {
     // MARK: - Device Header
 
     private var deviceHeader: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
-            // Tinted badge replaces the prior leading RadioButton.
-            // Selection is now signalled by accent-colored gradient on the
-            // badge plus bold device name; the row-level gesture in `body`
-            // handles tap-to-set-default.
+        HStack(spacing: 8) {
+            // Unboxed Apple SF Symbol
             DeviceBadge(icon: displayIcon, isSelected: isDefault)
 
-            // Device name + optional AutoEQ indicator + optional subtitle
-            HStack(spacing: 6) {
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 5) {
-                        Text(device.name)
-                            .font(DesignTokens.Typography.rowName)
-                            .lineLimit(1)
-                            .help(device.name)
+            // Device name + optional subtitle
+            VStack(alignment: .leading, spacing: 1) {
+                Text(device.name)
+                    .font(.system(size: 12.5, weight: isDefault ? .semibold : .regular))
+                    .foregroundStyle(isDefault ? DesignTokens.Colors.textPrimary : DesignTokens.Colors.textSecondary)
+                    .lineLimit(1)
+                    .help(device.name)
 
-                        // AutoEQ picker right beside the device name
-                        if device.supportsAutoEQ,
-                           let profileManager = autoEQProfileManager,
-                           let onSelect = onAutoEQSelect,
-                           let onImport = onAutoEQImport {
-                            AutoEQPicker(
-                                profileManager: profileManager,
-                                profileName: autoEQProfileName,
-                                selection: autoEQSelection,
-                                favoriteIDs: autoEQFavoriteIDs,
-                                onSelect: onSelect,
-                                onImport: onImport,
-                                onToggleFavorite: { id in onAutoEQToggleFavorite?(id) },
-                                importError: autoEQImportError,
-                                isCorrectionEnabled: autoEQEnabled,
-                                onCorrectionToggle: onAutoEQToggle,
-                                preampEnabled: autoEQPreampEnabled,
-                                onPreampToggle: onAutoEQPreampToggle
-                            )
-                        }
-                    }
-
-                    if let subtitle = Self.autoEQSubtitle(profileName: autoEQProfileName, isEnabled: autoEQEnabled) {
-                        Text(subtitle)
-                            .font(.system(size: 9))
-                            .foregroundStyle(DesignTokens.Colors.textTertiary)
-                            .lineLimit(1)
-                    }
+                if let subtitle = Self.autoEQSubtitle(profileName: autoEQProfileName, isEnabled: autoEQEnabled) {
+                    Text(subtitle)
+                        .font(.system(size: 9.5))
+                        .foregroundStyle(DesignTokens.Colors.textTertiary)
+                        .lineLimit(1)
                 }
-
-                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             // Mute button
             MuteButton(isMuted: showMutedIcon, levelFraction: sliderValue) {
                 if showMutedIcon {
-                    // Unmute: restore to default if displayed as 0%
                     if displayedPercentage == 0 {
                         suppressSliderAutoUnmute = isMuted
                         sliderValue = defaultUnmuteVolume
                     }
                     if isMuted {
-                        onMuteToggle()  // Toggle system mute
+                        onMuteToggle()
                     }
                 } else {
-                    // Mute
-                    onMuteToggle()  // Toggle system mute
+                    onMuteToggle()
                 }
             }
 
-            // Volume slider (Liquid Glass)
+            // Volume slider
             LiquidGlassSlider(
                 value: $sliderValue,
                 onEditingChanged: { editing in
                     isEditing = editing
                 }
             )
+            .frame(width: 100)
             .opacity(showMutedIcon ? 0.5 : 1.0)
             .onChange(of: sliderValue) { _, newValue in
-                // Skip write-back when syncing from device (breaks USB DAC quantization spiral)
                 if isUpdatingSliderFromDevice {
                     isUpdatingSliderFromDevice = false
                     return
@@ -226,24 +195,24 @@ struct DeviceRow: View {
                     suppressSliderAutoUnmute = false
                     return
                 }
-                // Auto-unmute when slider moved while muted
                 if isMuted && newValue > 0 {
                     onMuteToggle()
                 }
             }
             .scrollWheelStep($sliderValue, in: 0.0...1.0)
 
-            // Editable volume percentage
-            EditablePercentage(
-                percentage: Binding(
-                    get: { Int(round(sliderValue * 100)) },
-                    set: { sliderValue = Double($0) / 100.0 }
-                ),
-                range: 0...100,
-                isRowFocused: isFocused
-            )
+            // Active device checkmark (like native macOS Sound menu)
+            if isDefault {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 14)
+            } else {
+                Color.clear
+                    .frame(width: 14)
+            }
         }
-        .frame(height: DesignTokens.Dimensions.rowContentHeight)
+        .frame(height: 28)
         .onChange(of: volume) { _, newValue in
             // Only sync from external changes when user is NOT dragging
             guard !isEditing else { return }

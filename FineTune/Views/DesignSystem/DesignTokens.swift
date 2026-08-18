@@ -54,8 +54,8 @@ enum DesignTokens {
         /// System accent color for selections and primary actions
         static let accentPrimary: Color = .accentColor
 
-        /// Mute button active (muted state) - red for visibility
-        static let mutedIndicator = Color(nsColor: .systemRed).opacity(0.85)
+        /// Muted indicator: subtle secondary neutral matching Apple Control Center
+        static let mutedIndicator = Color.secondary.opacity(0.7)
 
         /// Default device indicator - uses accent color
         static let defaultDevice: Color = .accentColor

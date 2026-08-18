@@ -66,7 +66,7 @@ struct AppRowControls: View {
     }
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 6) {
             // Mute button
             MuteButton(isMuted: showMutedIcon, levelFraction: sliderValue) {
                 if showMutedIcon {
@@ -89,46 +89,9 @@ struct AppRowControls: View {
                     }
                 }
             )
-            .frame(width: 110)
+            .frame(width: 100)
             .opacity(showMutedIcon ? 0.5 : 1.0)
             .scrollWheelStep(sliderBinding, in: 0.0...1.0)
-
-            // Editable volume percentage
-            EditablePercentage(
-                percentage: Binding(
-                    get: {
-                        Int(round(sliderValue * 100))
-                    },
-                    set: { newPercentage in
-                        let sliderPos = Double(newPercentage) / 100.0
-                        let gain = VolumeMapping.sliderToGain(sliderPos)
-                        onVolumeChange(gain)
-                    }
-                ),
-                range: 0...100,
-                isRowFocused: isRowFocused
-            )
-
-            // Boost indicator
-            BoostChevrons(level: boost, onTap: { onBoostChange(boost.next) })
-
-            // Routing picker
-            DevicePicker(
-                devices: devices,
-                deviceIconOverrides: deviceIconOverrides,
-                selectedDeviceUID: selectedDeviceUID,
-                selectedDeviceUIDs: selectedDeviceUIDs,
-                isFollowingDefault: isFollowingDefault,
-                defaultDeviceUID: defaultDeviceUID,
-                mode: deviceSelectionMode,
-                onModeChange: onDeviceModeChange,
-                onDeviceSelected: onDeviceSelected,
-                onDevicesSelected: onDevicesSelected,
-                onSelectFollowDefault: onSelectFollowDefault,
-                showModeToggle: true,
-                triggerWidth: 0,
-                triggerStyle: .iconOnly
-            )
 
             // EQ toggle button
             Button {
@@ -146,9 +109,9 @@ struct AppRowControls: View {
                 .font(.system(size: 11.5, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(eqButtonColor)
-                .frame(width: 22, height: 22)
+                .frame(width: 20, height: 20)
                 .background {
-                    RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                    RoundedRectangle(cornerRadius: 4)
                         .fill(isEQButtonHovered || isEQExpanded ? DesignTokens.Colors.hoverSurface : Color.clear)
                 }
                 .contentShape(Rectangle())
@@ -156,7 +119,7 @@ struct AppRowControls: View {
             .buttonStyle(.plain)
             .accessibilityLabel(isEQExpanded ? "Close Equalizer" : "Equalizer")
             .onHover { isEQButtonHovered = $0 }
-            .help(isEQExpanded ? "Close Equalizer" : "Equalizer")
+            .help(isEQExpanded ? "Close Equalizer" : "Equalizer & Audio Routing")
             .animation(.spring(response: 0.3, dampingFraction: 0.75), value: isEQExpanded)
             .animation(DesignTokens.Animation.hover, value: isEQButtonHovered)
         }

@@ -13,8 +13,8 @@ struct LiquidGlassSlider: View {
     @State private var isDragging = false
     @State private var isHovered = false
 
-    private let capsuleHeight: CGFloat = DesignTokens.Dimensions.sliderCapsuleHeight
-    private let cornerRadius: CGFloat = DesignTokens.Dimensions.sliderCapsuleRadius
+    private let capsuleHeight: CGFloat = 11
+    private let cornerRadius: CGFloat = 5.5
 
     init(
         value: Binding<Double>,
@@ -41,78 +41,42 @@ struct LiquidGlassSlider: View {
             let fillWidth = max(0, min(width, width * CGFloat(normalizedValue)))
 
             ZStack(alignment: .leading) {
-                // 1. Capsule Track Background (Frosted Translucent Glass)
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(isHovered ? DesignTokens.Colors.sliderCapsuleTrackHover : DesignTokens.Colors.sliderCapsuleTrack)
+                // 1. Capsule Track (Restrained Translucent Material)
+                Capsule()
+                    .fill(Color.primary.opacity(isHovered ? 0.12 : 0.08))
                     .overlay {
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(isHovered ? 0.12 : 0.08),
-                                        Color.white.opacity(0.02)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
-                                lineWidth: 0.5
-                            )
+                        Capsule()
+                            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
                     }
 
-                // 2. Unity Marker (at 50% / 100%)
+                // 2. Unity Marker (subtle 50%/100% detent)
                 if showUnityMarker {
                     let unityPos = width * 0.5
                     Rectangle()
-                        .fill(DesignTokens.Colors.unityMarker)
-                        .frame(width: 1, height: capsuleHeight - 6)
+                        .fill(Color.primary.opacity(0.25))
+                        .frame(width: 1, height: capsuleHeight - 4)
                         .position(x: unityPos, y: capsuleHeight / 2)
                         .allowsHitTesting(false)
                 }
 
-                // 3. Filled Glass Capsule (Apple Control Center Luminous Fill)
+                // 3. Filled Capsule (Apple Neutral Luminous Material)
                 if fillWidth > 0 {
-                    ZStack(alignment: .trailing) {
-                        // Main luminous pill fill
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(isHovered || isDragging ? 0.98 : 0.92),
-                                        Color.white.opacity(isHovered || isDragging ? 0.90 : 0.84)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.primary.opacity(isHovered || isDragging ? 0.88 : 0.72),
+                                    Color.primary.opacity(isHovered || isDragging ? 0.80 : 0.64)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
                             )
-                            // Subtle top specular highlight
-                            .overlay(alignment: .top) {
-                                Capsule()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [
-                                                Color.white.opacity(0.6),
-                                                Color.clear
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                    .frame(height: 2)
-                                    .padding(.horizontal, 4)
-                            }
-                    }
-                    .frame(width: max(capsuleHeight, fillWidth), height: capsuleHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-                    .shadow(
-                        color: Color.black.opacity(isDragging ? 0.25 : 0.12),
-                        radius: isDragging ? 3 : 1.5,
-                        x: 0,
-                        y: 1
-                    )
+                        )
+                        .frame(width: max(capsuleHeight, fillWidth), height: capsuleHeight)
                 }
             }
             .frame(height: capsuleHeight)
-            .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .contentShape(Capsule())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { gesture in
