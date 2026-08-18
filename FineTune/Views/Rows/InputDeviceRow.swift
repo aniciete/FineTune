@@ -85,63 +85,19 @@ struct InputDeviceRow: View {
     // MARK: - Device Header
 
     private var deviceHeader: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             DeviceBadge(icon: displayIcon, isSelected: isDefault, fallbackSymbol: "mic.fill")
 
             // Device name
             Text(device.name)
-                .font(.system(size: 12.5, weight: isDefault ? .semibold : .regular))
+                .font(.system(size: 13, weight: isDefault ? .medium : .regular))
                 .foregroundStyle(isDefault ? DesignTokens.Colors.textPrimary : DesignTokens.Colors.textSecondary)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-            // Mute button (mic icon)
-            InputMuteButton(isMuted: showMutedIcon) {
-                if showMutedIcon {
-                    if displayedPercentage == 0 {
-                        sliderValue = defaultUnmuteVolume
-                    }
-                    if isMuted {
-                        onMuteToggle()
-                    }
-                } else {
-                    onMuteToggle()
-                }
-            }
-
-            // Volume slider
-            LiquidGlassSlider(
-                value: $sliderValue,
-                onEditingChanged: { editing in
-                    isEditing = editing
-                }
-            )
-            .frame(width: 100)
-            .opacity(showMutedIcon ? 0.5 : 1.0)
-            .onChange(of: sliderValue) { _, newValue in
-                if isUpdatingSliderFromDevice {
-                    isUpdatingSliderFromDevice = false
-                    return
-                }
-                onVolumeChange(Float(newValue))
-                if isMuted && newValue > 0 {
-                    onMuteToggle()
-                }
-            }
-            .scrollWheelStep($sliderValue, in: 0.0...1.0)
-
-            // Active checkmark
-            if isDefault {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color.accentColor)
-                    .frame(width: 14)
-            } else {
-                Color.clear
-                    .frame(width: 14)
-            }
         }
-        .frame(height: 28)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 4)
+        .frame(height: 32)
     }
 }
 

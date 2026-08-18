@@ -15,20 +15,28 @@ struct DeviceBadge: View {
     let isSelected: Bool
     var fallbackSymbol: String = "speaker.wave.2.fill"
 
+    private let size: CGFloat = 24
+
     var body: some View {
-        Group {
-            if let icon {
-                Image(nsImage: icon)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Image(systemName: fallbackSymbol)
-                    .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
-                    .symbolRenderingMode(.hierarchical)
+        ZStack {
+            Circle()
+                .fill(isSelected ? Color.accentColor : Color.primary.opacity(0.12))
+
+            Group {
+                if let icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Image(systemName: fallbackSymbol)
+                        .font(.system(size: 11.5, weight: .medium))
+                        .symbolRenderingMode(.hierarchical)
+                }
             }
+            .frame(width: 13, height: 13)
+            .foregroundStyle(isSelected ? Color.white : DesignTokens.Colors.textPrimary)
         }
-        .frame(width: 16, height: 16)
-        .foregroundStyle(isSelected ? Color.accentColor : DesignTokens.Colors.textSecondary)
+        .frame(width: size, height: size)
         .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isSelected)
         .accessibilityHidden(true)
     }

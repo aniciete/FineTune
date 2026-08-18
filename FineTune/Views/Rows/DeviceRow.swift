@@ -140,14 +140,14 @@ struct DeviceRow: View {
     // MARK: - Device Header
 
     private var deviceHeader: some View {
-        HStack(spacing: 8) {
-            // Unboxed Apple SF Symbol
+        HStack(spacing: 10) {
+            // Circular badge (blue for active, grey for inactive)
             DeviceBadge(icon: displayIcon, isSelected: isDefault)
 
             // Device name + optional subtitle
             VStack(alignment: .leading, spacing: 1) {
                 Text(device.name)
-                    .font(.system(size: 12.5, weight: isDefault ? .semibold : .regular))
+                    .font(.system(size: 13, weight: isDefault ? .medium : .regular))
                     .foregroundStyle(isDefault ? DesignTokens.Colors.textPrimary : DesignTokens.Colors.textSecondary)
                     .lineLimit(1)
                     .help(device.name)
@@ -160,59 +160,10 @@ struct DeviceRow: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
-            // Mute button
-            MuteButton(isMuted: showMutedIcon, levelFraction: sliderValue) {
-                if showMutedIcon {
-                    if displayedPercentage == 0 {
-                        suppressSliderAutoUnmute = isMuted
-                        sliderValue = defaultUnmuteVolume
-                    }
-                    if isMuted {
-                        onMuteToggle()
-                    }
-                } else {
-                    onMuteToggle()
-                }
-            }
-
-            // Volume slider
-            LiquidGlassSlider(
-                value: $sliderValue,
-                onEditingChanged: { editing in
-                    isEditing = editing
-                }
-            )
-            .frame(width: 100)
-            .opacity(showMutedIcon ? 0.5 : 1.0)
-            .onChange(of: sliderValue) { _, newValue in
-                if isUpdatingSliderFromDevice {
-                    isUpdatingSliderFromDevice = false
-                    return
-                }
-                onVolumeChange(Self.sliderToVolume(newValue, backend: volumeBackend))
-                if suppressSliderAutoUnmute {
-                    suppressSliderAutoUnmute = false
-                    return
-                }
-                if isMuted && newValue > 0 {
-                    onMuteToggle()
-                }
-            }
-            .scrollWheelStep($sliderValue, in: 0.0...1.0)
-
-            // Active device checkmark (like native macOS Sound menu)
-            if isDefault {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color.accentColor)
-                    .frame(width: 14)
-            } else {
-                Color.clear
-                    .frame(width: 14)
-            }
         }
-        .frame(height: 28)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 4)
+        .frame(height: 32)
         .onChange(of: volume) { _, newValue in
             // Only sync from external changes when user is NOT dragging
             guard !isEditing else { return }

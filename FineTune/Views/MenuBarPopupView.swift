@@ -106,22 +106,26 @@ struct MenuBarPopupView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-            HStack(alignment: .top) {
-                deviceTabsHeader
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .center) {
+                Text("Sound")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(DesignTokens.Colors.textPrimary)
+
                 Spacer()
+
                 if isEditingDevicePriority {
                     Text("Drag or type a number to set priority")
                         .font(.system(size: 11))
                         .foregroundStyle(DesignTokens.Colors.textSecondary)
-                } else {
-                    defaultDevicesStatus
                 }
-                Spacer()
+
+                deviceTabsHeader
                 editPriorityButton
                 settingsButton
             }
-            .padding(.bottom, DesignTokens.Spacing.xs)
+            .padding(.horizontal, 4)
+            .padding(.bottom, 2)
 
             ScrollViewReader { proxy in
                 ScrollView {
@@ -351,17 +355,95 @@ struct MenuBarPopupView: View {
 
     @ViewBuilder
     private func mainContent(scrollProxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
+            // Master volume slider right under the Sound header (Image 1)
+            masterVolumeSection
+
+            Divider()
+                .opacity(0.3)
+                .padding(.horizontal, 2)
+
             // Devices section (tabbed: Output / Input)
             devicesSection
 
             Divider()
                 .opacity(0.3)
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 2)
 
             // Apps section
             appsSection(scrollProxy: scrollProxy)
+
+            Divider()
+                .opacity(0.3)
+                .padding(.horizontal, 2)
+
+            // Sound Settings... text link (Image 1)
+            Button {
+                openSettingsWindow()
+            } label: {
+                Text("Sound Settings...")
+                    .font(.system(size: 12.5, weight: .medium))
+                    .foregroundStyle(DesignTokens.Colors.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 4)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
+    }
+
+    // MARK: - Master Volume Slider
+
+    private var masterVolumeSection: some View {
+        let defaultID = showingInputDevices
+            ? deviceVolumeMonitor.defaultInputDeviceID
+            : deviceVolumeMonitor.defaultDeviceID
+
+        let currentVol: Double = showingInputDevices
+            ? Double(deviceVolumeMonitor.inputVolumes[defaultID] ?? 1.0)
+            : Double(deviceVolumeMonitor.volumes[defaultID] ?? 1.0)
+
+        let isMuted: Bool = showingInputDevices
+            ? (deviceVolumeMonitor.inputMuteStates[defaultID] ?? false)
+            : (deviceVolumeMonitor.muteStates[defaultID] ?? false)
+
+        return HStack(spacing: 8) {
+            Button {
+                if showingInputDevices {
+                    deviceVolumeMonitor.setInputMute(for: defaultID, to: !isMuted)
+                } else {
+                    deviceVolumeMonitor.setMute(for: defaultID, to: !isMuted)
+                }
+            } label: {
+                Image(systemName: isMuted ? (showingInputDevices ? "mic.slash.fill" : "speaker.slash.fill") : (showingInputDevices ? "mic.fill" : "speaker.fill"))
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 14)
+            }
+            .buttonStyle(.plain)
+
+            LiquidGlassSlider(
+                value: Binding(
+                    get: { currentVol },
+                    set: { newVol in
+                        if showingInputDevices {
+                            deviceVolumeMonitor.setInputVolume(for: defaultID, to: Float(newVol))
+                        } else {
+                            deviceVolumeMonitor.setVolume(for: defaultID, to: Float(newVol))
+                        }
+                    }
+                )
+            )
+            .opacity(isMuted ? 0.5 : 1.0)
+
+            Image(systemName: showingInputDevices ? "mic.fill" : "speaker.wave.3.fill")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .frame(width: 14)
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
     }
 
     // MARK: - Default Devices Status
@@ -481,7 +563,13 @@ struct MenuBarPopupView: View {
 
     @ViewBuilder
     private var devicesSection: some View {
-        devicesContent
+        VStack(alignment: .leading, spacing: 4) {
+            SectionHeader(title: showingInputDevices ? "Input" : "Output")
+                .padding(.horizontal, 4)
+                .padding(.bottom, 2)
+
+            devicesContent
+        }
     }
 
     private var devicesContent: some View {
