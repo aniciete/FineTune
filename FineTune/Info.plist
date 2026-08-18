@@ -2,16 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDisplayName</key>
+	<string>Curv</string>
+	<key>CFBundleName</key>
+	<string>Curv</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAudioCaptureUsageDescription</key>
-	<string>FineTune needs access to control volume levels for individual applications.</string>
+	<string>Curv needs access to control volume levels for individual applications.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>FineTune needs microphone access to capture audio from apps using input-capable devices.</string>
+	<string>Curv needs microphone access to capture audio from apps using input-capable devices.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>FineTune uses Bluetooth to connect paired audio devices from the menu bar.</string>
+	<string>Curv uses Bluetooth to connect paired audio devices from the menu bar.</string>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/ronitsingh10/FineTune/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/aniciete/FineTune/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>xExSoQmCLDCez0KyhZ9EM9PdOZFZgyX/+VF+OVrpIlo=</string>
 	<key>SUEnableInstallerLauncherService</key>
@@ -21,10 +25,11 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>curv</string>
 				<string>finetune</string>
 			</array>
 			<key>CFBundleURLName</key>
-			<string>com.finetuneapp.FineTune</string>
+			<string>com.curvapp.Curv</string>
 		</dict>
 	</array>
 </dict>

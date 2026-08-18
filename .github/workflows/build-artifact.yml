@@ -29,12 +29,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
           
           mkdir -p dist
-          APP_PATH=$(find ./DerivedData -name "FineTune.app" -type d | head -n 1)
+          APP_PATH=$(find ./DerivedData -name "*.app" -type d | head -n 1)
           echo "Found app at: $APP_PATH"
-          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" dist/FineTune.zip
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" dist/Curv.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FineTune-macOS
-          path: dist/FineTune.zip
+          name: Curv-macOS
+          path: dist/Curv.zip

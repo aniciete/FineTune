@@ -453,8 +453,8 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D ENABLE_TCC_SPI -enable-experimental-feature IsolatedDeinit";
-				PRODUCT_BUNDLE_IDENTIFIER = com.finetuneapp.FineTune;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.curvapp.Curv;
+				PRODUCT_NAME = "Curv";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -491,8 +491,8 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D ENABLE_TCC_SPI -enable-experimental-feature IsolatedDeinit";
-				PRODUCT_BUNDLE_IDENTIFIER = com.finetuneapp.FineTune;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.curvapp.Curv;
+				PRODUCT_NAME = "Curv";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

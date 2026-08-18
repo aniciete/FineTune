@@ -5,7 +5,7 @@ import FluidMenuBarExtra
 import AppKit
 import os
 
-private let logger = Logger(subsystem: "com.finetuneapp.FineTune", category: "App")
+private let logger = Logger(subsystem: "com.curvapp.Curv", category: "App")
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -73,7 +73,7 @@ struct FineTuneApp: App {
                 updateManager: updateManager
             )
         }
-        FluidMenuBarExtra("FineTune", image: launchIconImage, isInserted: $showMenuBarExtra) {
+        FluidMenuBarExtra("Curv", image: launchIconImage, isInserted: $showMenuBarExtra) {
             menuBarContent
         }
     }
@@ -208,7 +208,7 @@ struct FineTuneApp: App {
         // status item has been materialized before any hotkey can fire.
         let popupController = MenuBarPopupController()
         let resolver = TargetAppResolver(
-            ownBundleID: Bundle.main.bundleIdentifier ?? "com.finetuneapp.FineTune"
+            ownBundleID: Bundle.main.bundleIdentifier ?? "com.curvapp.Curv"
         )
         resolver.start()
         let registry = ShortcutsRegistry(

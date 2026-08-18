@@ -366,8 +366,8 @@ struct MenuBarPopupView: View {
                         isSupportHovered = hovering
                     }
                 }
-                .accessibilityLabel("Donate to FineTune")
-                .help("Donate to FineTune")
+                .accessibilityLabel("Donate to Curv")
+                .help("Donate to Curv")
 
                 Spacer()
 
@@ -384,8 +384,8 @@ struct MenuBarPopupView: View {
                 .font(DesignTokens.Typography.caption)
                 .foregroundStyle(DesignTokens.Colors.textSecondary)
                 .glassButtonStyle()
-                .accessibilityLabel("Quit FineTune")
-                .help("Quit FineTune (⌘Q)")
+                .accessibilityLabel("Quit Curv")
+                .help("Quit Curv (⌘Q)")
             }
             .padding(.horizontal, 2)
         }
