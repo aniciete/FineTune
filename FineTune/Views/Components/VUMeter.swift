@@ -120,8 +120,14 @@ private struct VUMeterBar: View {
     }
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 0.5)
+        RoundedRectangle(cornerRadius: 1.5)
             .fill(isLit || isPeakIndicator ? barColor : DesignTokens.Colors.vuUnlit)
+            .shadow(
+                color: (isLit || isPeakIndicator) && index >= 6 ? barColor.opacity(0.4) : Color.clear,
+                radius: 2,
+                x: 0,
+                y: 0
+            )
             .animation(DesignTokens.Animation.vuMeterLevel, value: isLit)
     }
 }

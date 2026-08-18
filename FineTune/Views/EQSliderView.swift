@@ -24,9 +24,8 @@ struct EQSliderView: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             GeometryReader { geo in
-                // Thumb travels within padded range
                 let travelHeight = geo.size.height - (verticalPadding * 2)
                 let normalizedGain = CGFloat((localGain - range.lowerBound) / (range.upperBound - range.lowerBound))
                 let thumbY = verticalPadding + travelHeight * (1 - normalizedGain)
@@ -37,7 +36,6 @@ struct EQSliderView: View {
                         DragGesture(minimumDistance: 0)
                             .onChanged { value in
                                 isDragging = true
-                                // Map touch to padded range
                                 let normalizedY = (value.location.y - verticalPadding) / travelHeight
                                 let normalized = 1 - normalizedY
                                 let clamped = min(max(normalized, 0), 1)
@@ -51,81 +49,85 @@ struct EQSliderView: View {
                     )
                     .scrollWheelStep($gain, in: range)
                     .overlay {
-                        // All visuals - no hit testing
                         ZStack {
-                            // Tick marks on LEFT side
-                            VStack(spacing: 0) {
-                                ForEach(0..<tickCount, id: \.self) { index in
-                                    if index > 0 { Spacer() }
-                                    Rectangle()
-                                        .fill(DesignTokens.Colors.textTertiary.opacity(0.4))
-                                        .frame(width: tickWidth, height: 1)
-                                }
-                            }
-                            .frame(height: travelHeight)
-                            .offset(x: -(trackWidth / 2 + tickGap + tickWidth / 2))
+                            // Vertical Track Capsule
+                            Capsule()
+                                .fill(DesignTokens.Colors.sliderCapsuleTrack)
+                                .frame(width: 4)
 
-                            // Tick marks on RIGHT side
-                            VStack(spacing: 0) {
-                                ForEach(0..<tickCount, id: \.self) { index in
-                                    if index > 0 { Spacer() }
-                                    Rectangle()
-                                        .fill(DesignTokens.Colors.textTertiary.opacity(0.4))
-                                        .frame(width: tickWidth, height: 1)
-                                }
-                            }
-                            .frame(height: travelHeight)
-                            .offset(x: trackWidth / 2 + tickGap + tickWidth / 2)
-
-                            // Track (full height)
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(DesignTokens.Colors.sliderTrack)
-                                .frame(width: trackWidth)
-
-                            // Center line (0 dB marker) - spans across ticks
+                            // 0 dB Center Baseline Marker
                             Rectangle()
-                                .fill(DesignTokens.Colors.unityMarker)
-                                .frame(width: trackWidth + (tickGap + tickWidth) * 2, height: 1.5)
+                                .fill(DesignTokens.Colors.eqZeroLine)
+                                .frame(width: 14, height: 1)
+                                .position(x: geo.size.width / 2, y: geo.size.height / 2)
 
-                            // Knob-style thumb (themed background with center dot)
+                            // Active Fill Bar from center (0 dB) to current value
+                            let zeroY = geo.size.height / 2
+                            let barHeight = abs(thumbY - zeroY)
+                            let barY = min(thumbY, zeroY) + (barHeight / 2)
+
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.accentColor,
+                                            Color.accentColor.opacity(0.8)
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width: 4, height: max(4, barHeight))
+                                .position(x: geo.size.width / 2, y: barY)
+
+                            // Modern Tactile Knob
                             ZStack {
                                 Circle()
-                                    .fill(DesignTokens.Colors.thumbBackground)
+                                    .fill(Color.white)
                                 Circle()
-                                    .fill(DesignTokens.Colors.thumbDot)
-                                    .frame(width: thumbSize * 0.35, height: thumbSize * 0.35)
+                                    .fill(Color.accentColor)
+                                    .frame(width: 5, height: 5)
                             }
-                            .frame(width: thumbSize, height: thumbSize)
-                            .shadow(color: .black.opacity(0.4), radius: 2, y: 1)
+                            .frame(width: isDragging ? 15 : 13, height: isDragging ? 15 : 13)
+                            .shadow(color: Color.black.opacity(0.35), radius: 2, y: 1)
+                            .shadow(color: isDragging ? Color.accentColor.opacity(0.5) : Color.clear, radius: 4)
                             .position(x: geo.size.width / 2, y: thumbY)
+                            .scaleEffect(isDragging ? 1.15 : 1.0)
+                            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isDragging)
 
-                            // dB value label (appears during drag)
+                            // Floating dB Value Bubble
                             if isDragging {
                                 Text(formatGain(localGain))
-                                    .font(.system(size: 9, weight: .medium).monospacedDigit())
-                                    .foregroundStyle(DesignTokens.Colors.textPrimary)
-                                    .fixedSize()
-                                    .position(x: geo.size.width / 2, y: thumbY - thumbSize / 2 - 10)
+                                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                    .foregroundStyle(Color.white)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background {
+                                        Capsule().fill(Color.accentColor)
+                                    }
+                                    .shadow(color: Color.black.opacity(0.3), radius: 2, y: 1)
+                                    .position(x: geo.size.width / 2, y: max(10, thumbY - 18))
+                                    .transition(.scale.combined(with: .opacity))
                             }
                         }
                         .allowsHitTesting(false)
                     }
             }
 
-            VStack(spacing: 0) {
+            VStack(spacing: 1) {
                 Text(frequency)
                     .font(DesignTokens.Typography.eqLabel)
-                    .foregroundStyle(DesignTokens.Colors.textSecondary)
+                    .foregroundStyle(isDragging ? DesignTokens.Colors.textPrimary : DesignTokens.Colors.textSecondary)
                 Text("Hz")
-                    .font(DesignTokens.Typography.caption)
+                    .font(.system(size: 8, weight: .regular))
                     .foregroundStyle(DesignTokens.Colors.textTertiary)
             }
         }
         .onAppear {
-            localGain = gain  // Initialize from binding
+            localGain = gain
         }
         .onChange(of: gain) { _, newValue in
-            localGain = newValue  // Sync from external changes
+            localGain = newValue
         }
     }
 }

@@ -32,15 +32,24 @@ struct DeviceBadge: View {
                         LinearGradient(
                             colors: [
                                 Color.accentColor,
-                                Color.accentColor.opacity(0.78)
+                                Color.accentColor.opacity(0.85)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
+                    .overlay {
+                        Circle()
+                            .strokeBorder(Color.white.opacity(0.25), lineWidth: 0.75)
+                    }
+                    .shadow(color: Color.accentColor.opacity(0.35), radius: 3, x: 0, y: 1)
             } else {
                 Circle()
                     .fill(DesignTokens.Colors.deviceBadgeMonoFill)
+                    .overlay {
+                        Circle()
+                            .strokeBorder(Color.primary.opacity(0.04), lineWidth: 0.5)
+                    }
             }
 
             // Glyph — device icon when present, fallback SF Symbol otherwise.
@@ -58,6 +67,7 @@ struct DeviceBadge: View {
             .foregroundStyle(glyphForeground)
         }
         .frame(width: Self.badgeSize, height: Self.badgeSize)
+        .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isSelected)
         .accessibilityHidden(true)
     }
 

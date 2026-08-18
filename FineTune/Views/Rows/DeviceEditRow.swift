@@ -183,13 +183,14 @@ struct DeviceEditRow<ExpandedContent: View>: View {
                     .opacity(isExpanded ? 1 : 0)
                     .rotationEffect(.degrees(isExpanded ? 0 : -90))
             }
-            .font(.system(size: 12))
+            .font(.system(size: 12, weight: .medium))
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(infoButtonColor)
-            .frame(
-                minWidth: DesignTokens.Dimensions.minTouchTarget,
-                minHeight: DesignTokens.Dimensions.minTouchTarget
-            )
+            .frame(width: 24, height: 24)
+            .background {
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                    .fill(isInfoButtonHovered || isExpanded ? DesignTokens.Colors.hoverSurface : Color.clear)
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

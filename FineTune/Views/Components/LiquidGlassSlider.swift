@@ -1,21 +1,20 @@
 // FineTune/Views/Components/LiquidGlassSlider.swift
 import SwiftUI
 
-/// A slider using native SwiftUI Slider for Liquid Glass effect on macOS 26+
-/// Styled to match the minimal track appearance of device sliders
+/// A modern Apple Control Center style interactive capsule slider.
+/// Features fluid gradient fills, tactile drag mechanics, unity detent markings,
+/// and smooth hover illumination.
 struct LiquidGlassSlider: View {
     @Binding var value: Double
     let range: ClosedRange<Double>
     let showUnityMarker: Bool
     let onEditingChanged: ((Bool) -> Void)?
 
-    @State private var isEditing = false
+    @State private var isDragging = false
     @State private var isHovered = false
 
-    /// Show thumb only when hovering or dragging
-    private var showThumb: Bool {
-        isHovered || isEditing
-    }
+    private let capsuleHeight: CGFloat = DesignTokens.Dimensions.sliderCapsuleHeight
+    private let cornerRadius: CGFloat = DesignTokens.Dimensions.sliderCapsuleRadius
 
     init(
         value: Binding<Double>,
@@ -29,58 +28,95 @@ struct LiquidGlassSlider: View {
         self.onEditingChanged = onEditingChanged
     }
 
-    private let trackHeight: CGFloat = 4
-
     private var normalizedValue: Double {
-        (value - range.lowerBound) / (range.upperBound - range.lowerBound)
+        let span = range.upperBound - range.lowerBound
+        guard span > 0 else { return 0 }
+        let clamped = min(max(value, range.lowerBound), range.upperBound)
+        return (clamped - range.lowerBound) / span
     }
 
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                // Custom track overlay (always visible, hides native track)
-                ZStack(alignment: .leading) {
-                    // Track background
-                    Capsule()
-                        .fill(DesignTokens.Colors.sliderTrack)
-                        .frame(height: trackHeight)
+            let width = geo.size.width
+            let fillWidth = max(0, min(width, width * CGFloat(normalizedValue)))
 
-                    // Filled track
-                    Capsule()
-                        .fill(DesignTokens.Colors.accentPrimary)
-                        .frame(width: max(trackHeight, geo.size.width * normalizedValue), height: trackHeight)
-                }
-                .frame(maxHeight: .infinity)
-                .allowsHitTesting(false)
-
-                // Unity marker at 50% (horizontally centered, vertically centered via frame)
-                if showUnityMarker {
-                    HStack {
-                        Spacer()
-                        Rectangle()
-                            .fill(DesignTokens.Colors.unityMarker)
-                            .frame(width: 1.5, height: 8)
-                        Spacer()
+            ZStack(alignment: .leading) {
+                // 1. Capsule Track Background
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(isHovered ? DesignTokens.Colors.sliderCapsuleTrackHover : DesignTokens.Colors.sliderCapsuleTrack)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(Color.primary.opacity(isHovered ? 0.08 : 0.04), lineWidth: 0.5)
                     }
-                    .frame(maxHeight: .infinity)
-                    .allowsHitTesting(false)
+
+                // 2. Unity Marker
+                if showUnityMarker {
+                    let unityPos = width * 0.5
+                    Rectangle()
+                        .fill(DesignTokens.Colors.unityMarker)
+                        .frame(width: 1.5, height: capsuleHeight - 6)
+                        .position(x: unityPos, y: capsuleHeight / 2)
+                        .allowsHitTesting(false)
                 }
 
-                // Native SwiftUI Slider - gets Liquid Glass thumb on macOS 26+
-                // Thumb only visible on hover/drag
-                Slider(value: $value, in: range) { editing in
-                    isEditing = editing
-                    onEditingChanged?(editing)
+                // 3. Filled Gradient Capsule
+                if fillWidth > 0 {
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.accentColor.opacity(0.92),
+                                    Color.accentColor
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(capsuleHeight, fillWidth), height: capsuleHeight)
+                        .overlay(alignment: .trailing) {
+                            if fillWidth >= capsuleHeight {
+                                Capsule()
+                                    .fill(Color.white.opacity(0.35))
+                                    .frame(width: 3, height: capsuleHeight - 8)
+                                    .padding(.trailing, 4)
+                            }
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                        .shadow(
+                            color: Color.accentColor.opacity(isDragging || isHovered ? 0.35 : 0.15),
+                            radius: isDragging ? 4 : 2,
+                            x: 0,
+                            y: 1
+                        )
                 }
-                .controlSize(.mini)
-                .tint(.clear)  // Hide native track, we draw our own
-                .opacity(showThumb ? 1 : 0.01)  // Nearly invisible when not hovered, but still interactive
+            }
+            .frame(height: capsuleHeight)
+            .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { gesture in
+                        if !isDragging {
+                            isDragging = true
+                            onEditingChanged?(true)
+                        }
+                        let fraction = max(0.0, min(1.0, gesture.location.x / width))
+                        let span = range.upperBound - range.lowerBound
+                        let newValue = range.lowerBound + (Double(fraction) * span)
+                        value = newValue
+                    }
+                    .onEnded { _ in
+                        isDragging = false
+                        onEditingChanged?(false)
+                    }
+            )
+        }
+        .frame(height: capsuleHeight)
+        .onHover { hovering in
+            withAnimation(DesignTokens.Animation.hover) {
+                isHovered = hovering
             }
         }
-        .frame(height: DesignTokens.Dimensions.sliderThumbHeight)
-        .onHover { hovering in
-            isHovered = hovering
-        }
+        .animation(isDragging ? nil : DesignTokens.Animation.quick, value: normalizedValue)
     }
 }
 

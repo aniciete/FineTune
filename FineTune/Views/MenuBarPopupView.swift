@@ -255,7 +255,7 @@ struct MenuBarPopupView: View {
 
     // MARK: - Edit Priority Button
 
-    /// Edit priority button — pencil ↔ checkmark, styled to match settingsButton
+    /// Edit priority button — pencil ↔ checkmark, styled with tactile circular hover plate
     private var editPriorityButton: some View {
         Button(isEditingDevicePriority ? "Done reordering" : "Reorder devices",
                systemImage: isEditingDevicePriority ? "checkmark" : "pencil") {
@@ -263,13 +263,14 @@ struct MenuBarPopupView: View {
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.plain)
-        .font(.system(size: 12, weight: isEditingDevicePriority ? .bold : .regular))
+        .font(.system(size: 12, weight: isEditingDevicePriority ? .bold : .medium))
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(DesignTokens.Colors.interactiveDefault)
-        .frame(
-            minWidth: DesignTokens.Dimensions.minTouchTarget,
-            minHeight: DesignTokens.Dimensions.minTouchTarget
-        )
+        .foregroundStyle(isEditingDevicePriority ? DesignTokens.Colors.accentPrimary : DesignTokens.Colors.interactiveDefault)
+        .frame(width: 26, height: 26)
+        .background {
+            RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                .fill(isEditingDevicePriority ? Color.accentColor.opacity(0.15) : Color.primary.opacity(0.06))
+        }
         .contentShape(Rectangle())
         .animation(.spring(response: 0.3, dampingFraction: 0.75), value: isEditingDevicePriority)
         .help(isEditingDevicePriority ? "Done reordering" : "Reorder devices")
@@ -283,13 +284,14 @@ struct MenuBarPopupView: View {
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.plain)
-        .font(.system(size: 12))
+        .font(.system(size: 12, weight: .medium))
         .symbolRenderingMode(.hierarchical)
         .foregroundStyle(DesignTokens.Colors.interactiveDefault)
-        .frame(
-            minWidth: DesignTokens.Dimensions.minTouchTarget,
-            minHeight: DesignTokens.Dimensions.minTouchTarget
-        )
+        .frame(width: 26, height: 26)
+        .background {
+            RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                .fill(Color.primary.opacity(0.06))
+        }
         .contentShape(Rectangle())
     }
 
@@ -332,29 +334,33 @@ struct MenuBarPopupView: View {
 
     @ViewBuilder
     private func mainContent(scrollProxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             // Devices section (tabbed: Output / Input)
             devicesSection
 
-            Divider()
-                .padding(.vertical, DesignTokens.Spacing.xs)
-
             // Apps section (active + pinned inactive + hidden in edit mode)
             appsSection(scrollProxy: scrollProxy)
-
-            Divider()
-                .padding(.vertical, DesignTokens.Spacing.xs)
 
             // Footer: support link + quit
             HStack {
                 Button {
                     NSWorkspace.shared.open(DesignTokens.Links.support)
                 } label: {
-                    Label("Donate", systemImage: isSupportHovered ? "heart.fill" : "heart")
+                    HStack(spacing: 5) {
+                        Image(systemName: isSupportHovered ? "heart.fill" : "heart")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("Donate")
+                            .font(.system(size: 11, weight: .medium))
+                    }
                 }
                 .buttonStyle(.plain)
-                .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(isSupportHovered ? Color(nsColor: .systemPink) : DesignTokens.Colors.textTertiary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background {
+                    Capsule()
+                        .fill(isSupportHovered ? Color(nsColor: .systemPink).opacity(0.12) : Color.clear)
+                }
                 .onHover { hovering in
                     withAnimation(DesignTokens.Animation.hover) {
                         isSupportHovered = hovering
@@ -381,6 +387,7 @@ struct MenuBarPopupView: View {
                 .accessibilityLabel("Quit FineTune")
                 .help("Quit FineTune (⌘Q)")
             }
+            .padding(.horizontal, 2)
         }
     }
 
@@ -502,6 +509,7 @@ struct MenuBarPopupView: View {
     @ViewBuilder
     private var devicesSection: some View {
         devicesContent
+            .glassIslandCard()
     }
 
     private var devicesContent: some View {
@@ -756,10 +764,14 @@ struct MenuBarPopupView: View {
             PermissionBannerView(permission: permission)
         } else if isEditingDevicePriority {
             appEditModeContent
+                .padding(DesignTokens.Spacing.sm)
+                .glassIslandCard()
         } else if audioEngine.displayableApps.isEmpty {
             emptyStateView
+                .glassIslandCard()
         } else {
             appsContent(scrollProxy: scrollProxy)
+                .glassIslandCard()
         }
     }
 

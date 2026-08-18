@@ -71,14 +71,15 @@ private struct BaseMuteButton: View {
                 }
                 Image(systemName: isMuted ? mutedIcon : unmutedIcon)
             }
-            .font(.system(size: 14))
+            .font(.system(size: 13, weight: .medium))
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(buttonColor)
-            .scaleEffect(isPulsing ? 1.1 : 1.0)
-            .frame(
-                minWidth: DesignTokens.Dimensions.minTouchTarget,
-                minHeight: DesignTokens.Dimensions.minTouchTarget
-            )
+            .scaleEffect(isPulsing ? 1.15 : 1.0)
+            .frame(width: 24, height: 24)
+            .background {
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                    .fill(isHovered ? DesignTokens.Colors.hoverSurface : Color.clear)
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(MuteButtonPressStyle())

@@ -94,7 +94,7 @@ struct ClassicStyleHUD: View {
             HStack(spacing: Self.tileSpacing) {
                 Spacer().frame(width: Self.tileSideInset)
                 ForEach(0..<Self.tileCount, id: \.self) { index in
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: 1.5)
                         .fill(index < filledTileCount
                               ? DesignTokens.Colors.hudTileActive
                               : DesignTokens.Colors.hudTileInactive)

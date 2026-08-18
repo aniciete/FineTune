@@ -142,13 +142,14 @@ struct AppRowControls: View {
                         .opacity(isEQExpanded ? 1 : 0)
                         .rotationEffect(.degrees(isEQExpanded ? 0 : -90))
                 }
-                .font(.system(size: 12))
+                .font(.system(size: 12, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(eqButtonColor)
-                .frame(
-                    minWidth: DesignTokens.Dimensions.minTouchTarget,
-                    minHeight: DesignTokens.Dimensions.minTouchTarget
-                )
+                .frame(width: 24, height: 24)
+                .background {
+                    RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
+                        .fill(isEQButtonHovered || isEQExpanded ? DesignTokens.Colors.hoverSurface : Color.clear)
+                }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)

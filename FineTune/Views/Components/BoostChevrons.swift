@@ -32,24 +32,48 @@ struct BoostChevrons: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: -2) {
-                ForEach((0..<3).reversed(), id: \.self) { index in
-                    Image(systemName: "chevron.compact.up")
-                        .font(.system(size: 12, weight: .heavy))
-                        .foregroundStyle(chevronColor(at: index))
-                }
+            HStack(spacing: 2) {
+                Text(level.label)
+                    .font(.system(size: 10, weight: level != .x1 ? .bold : .medium, design: .rounded))
             }
-            .frame(
-                minWidth: DesignTokens.Dimensions.minTouchTarget,
-                minHeight: DesignTokens.Dimensions.minTouchTarget
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background {
+                Capsule()
+                    .fill(
+                        level != .x1
+                            ? Color.accentColor.opacity(0.85)
+                            : (isHovered ? DesignTokens.Colors.sliderCapsuleTrackHover : DesignTokens.Colors.boostInactiveBackground)
+                    )
+            }
+            .overlay {
+                Capsule()
+                    .strokeBorder(
+                        level != .x1
+                            ? Color.accentColor
+                            : (isHovered ? DesignTokens.Colors.glassBorderHover : DesignTokens.Colors.glassBorder),
+                        lineWidth: 0.5
+                    )
+            }
+            .foregroundStyle(
+                level != .x1
+                    ? Color.white
+                    : (isHovered ? DesignTokens.Colors.interactiveHover : DesignTokens.Colors.boostInactiveForeground)
             )
+            .shadow(
+                color: level != .x1 ? Color.accentColor.opacity(0.4) : Color.clear,
+                radius: 3,
+                x: 0,
+                y: 1
+            )
+            .scaleEffect(isHovered ? 1.05 : 1.0)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .onHover { isHovered = $0 }
-        .help("Volume boost: \(level.label)")
+        .help("Volume boost: \(level.label) (click to cycle)")
         .accessibilityLabel("Volume boost \(level.label)")
-        .animation(.snappy(duration: 0.2), value: level)
+        .animation(.spring(response: 0.25, dampingFraction: 0.75), value: level)
         .animation(DesignTokens.Animation.hover, value: isHovered)
     }
 }

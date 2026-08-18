@@ -139,9 +139,31 @@ struct VibrancyIconModifier: ViewModifier {
     }
 }
 
+// MARK: - Glass Island Card Modifier (macOS Control Center / Settings Grouped Island)
+
+struct GlassIslandCardModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background {
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius)
+                    .fill(DesignTokens.Colors.islandBackground)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius)
+                    .strokeBorder(DesignTokens.Colors.islandBorder, lineWidth: 0.75)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius))
+    }
+}
+
 // MARK: - View Extensions
 
 extension View {
+    /// Applies grouped glass island card container styling
+    func glassIslandCard() -> some View {
+        modifier(GlassIslandCardModifier())
+    }
+
     /// Applies hoverable row styling (forwards to floatingGlassRow)
     func hoverableRow(isFocused: Bool = false) -> some View {
         modifier(HoverableRowModifier(isFocused: isFocused))

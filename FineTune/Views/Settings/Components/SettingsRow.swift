@@ -45,7 +45,9 @@ struct SettingsRow<Trailing: View>: View {
 /// container border.
 struct SettingsRowDivider: View {
     var body: some View {
-        Divider()
+        Rectangle()
+            .fill(DesignTokens.Colors.islandDivider)
+            .frame(height: 0.5)
             .padding(.leading, 16)
     }
 }

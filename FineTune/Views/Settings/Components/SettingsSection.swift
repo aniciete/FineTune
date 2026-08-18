@@ -12,21 +12,18 @@ struct SettingsSection<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             if let title {
                 Text(title)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(DesignTokens.Colors.textPrimary)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(DesignTokens.Colors.sectionHeaderText)
+                    .tracking(0.5)
                     .padding(.horizontal, 4)
             }
             VStack(spacing: 0) {
                 content()
             }
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(Color(nsColor: .separatorColor), lineWidth: 0.5)
-            }
+            .glassIslandCard()
         }
     }
 }

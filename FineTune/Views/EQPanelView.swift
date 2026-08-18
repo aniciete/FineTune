@@ -102,6 +102,13 @@ struct EQPanelView: View {
             }
             .zIndex(1)  // Ensure dropdown renders above sliders
 
+            // Real-Time Spline Frequency Response Curve
+            EQCurveVisualizer(
+                bandGains: settings.bandGains,
+                isEnabled: settings.isEnabled
+            )
+            .padding(.horizontal, 2)
+
             HStack(spacing: 0) {
                 ForEach(0..<10, id: \.self) { index in
                     EQSliderView(
@@ -114,7 +121,7 @@ struct EQPanelView: View {
                             }
                         )
                     )
-                    .frame(width: 26, height: 100)
+                    .frame(width: 26, height: 105)
                     .frame(maxWidth: .infinity)
                 }
             }
