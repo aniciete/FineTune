@@ -29,8 +29,11 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
           
           mkdir -p dist
-          APP_PATH=$(find ./DerivedData -name "*.app" -type d | head -n 1)
-          echo "Found app at: $APP_PATH"
+          APP_PATH="./DerivedData/Build/Products/Release/Curv.app"
+          if [ ! -d "$APP_PATH" ]; then
+            APP_PATH=$(find ./DerivedData/Build/Products/Release -name "*.app" -maxdepth 1 | head -n 1)
+          fi
+          echo "Packaging app from: $APP_PATH"
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" dist/Curv.zip
 
       - name: Upload Artifact
