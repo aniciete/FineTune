@@ -33,7 +33,6 @@ struct SectionHeaderStyleModifier: ViewModifier {
             .font(DesignTokens.Typography.sectionHeader)
             .foregroundStyle(DesignTokens.Colors.sectionHeaderText)
             .tracking(DesignTokens.Typography.sectionHeaderTracking)
-            .textCase(.uppercase)
     }
 }
 
@@ -145,14 +144,25 @@ struct GlassIslandCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
-                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius)
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius, style: .continuous)
                     .fill(DesignTokens.Colors.islandBackground)
             }
             .overlay {
-                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius)
-                    .strokeBorder(DesignTokens.Colors.islandBorder, lineWidth: 0.75)
+                RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.16),
+                                Color.white.opacity(0.04)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 0.75
+                    )
             }
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Dimensions.islandRadius, style: .continuous))
+            .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
     }
 }
 

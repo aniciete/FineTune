@@ -99,69 +99,72 @@ enum DesignTokens {
         /// material. Crisp white-tilted glass in light mode, deep dark glass in dark mode.
         static let popupOverlay = dynamicColor(
             name: "popupOverlay",
-            light: NSColor.white.withAlphaComponent(0.55),
-            dark: NSColor.black.withAlphaComponent(0.45)
+            light: NSColor.white.withAlphaComponent(0.45),
+            dark: NSColor.black.withAlphaComponent(0.35)
         )
 
         /// Grouped glass island card background (macOS Control Center / Settings style).
         static let islandBackground = dynamicColor(
             name: "islandBackground",
-            light: NSColor.white.withAlphaComponent(0.60),
-            dark: NSColor.white.withAlphaComponent(0.06)
+            light: NSColor.white.withAlphaComponent(0.65),
+            dark: NSColor.white.withAlphaComponent(0.07)
         )
 
         /// Grouped glass island card hairline border.
         static let islandBorder = dynamicColor(
             name: "islandBorder",
-            light: NSColor.black.withAlphaComponent(0.08),
-            dark: NSColor.white.withAlphaComponent(0.12)
+            light: NSColor.black.withAlphaComponent(0.07),
+            dark: NSColor.white.withAlphaComponent(0.14)
         )
 
         /// Inset divider between rows inside a grouped island card.
         static let islandDivider = dynamicColor(
             name: "islandDivider",
-            light: NSColor.black.withAlphaComponent(0.06),
-            dark: NSColor.white.withAlphaComponent(0.07)
+            light: NSColor.black.withAlphaComponent(0.05),
+            dark: NSColor.white.withAlphaComponent(0.06)
         )
 
-        /// Recessed panel background (EQ panel). Light mode is nearly flush
-        /// with the surrounding glass; opaque cards do the floating instead.
+        /// Recessed panel background (EQ panel).
         static let recessedBackground = dynamicColor(
             name: "recessedBackground",
-            light: NSColor.black.withAlphaComponent(0.04),
-            dark: NSColor.black.withAlphaComponent(0.25)
+            light: NSColor.black.withAlphaComponent(0.03),
+            dark: NSColor.black.withAlphaComponent(0.20)
         )
 
-        // MARK: Capsule Slider Tokens
+        // MARK: Capsule Slider Tokens (Apple Control Center Style)
 
         /// Control Center capsule slider unfilled track background.
         static let sliderCapsuleTrack = dynamicColor(
             name: "sliderCapsuleTrack",
-            light: NSColor.black.withAlphaComponent(0.07),
-            dark: NSColor.white.withAlphaComponent(0.10)
+            light: NSColor.black.withAlphaComponent(0.06),
+            dark: NSColor.white.withAlphaComponent(0.09)
         )
 
         /// Control Center capsule slider track on hover.
         static let sliderCapsuleTrackHover = dynamicColor(
             name: "sliderCapsuleTrackHover",
-            light: NSColor.black.withAlphaComponent(0.11),
-            dark: NSColor.white.withAlphaComponent(0.14)
+            light: NSColor.black.withAlphaComponent(0.09),
+            dark: NSColor.white.withAlphaComponent(0.13)
         )
+
+        /// Control Center slider fill in dark mode (Luminous frosted white/glass).
+        static let sliderFillLight = Color(red: 0.15, green: 0.15, blue: 0.16)
+        static let sliderFillDark = Color.white.opacity(0.92)
 
         // MARK: Boost Badge Tokens
 
         /// Boost badge background when inactive (1x).
         static let boostInactiveBackground = dynamicColor(
             name: "boostInactiveBackground",
-            light: NSColor.black.withAlphaComponent(0.06),
-            dark: NSColor.white.withAlphaComponent(0.08)
+            light: NSColor.black.withAlphaComponent(0.05),
+            dark: NSColor.white.withAlphaComponent(0.07)
         )
 
         /// Boost badge text color when inactive.
         static let boostInactiveForeground = dynamicColor(
             name: "boostInactiveForeground",
-            light: NSColor.black.withAlphaComponent(0.45),
-            dark: NSColor.white.withAlphaComponent(0.45)
+            light: NSColor.black.withAlphaComponent(0.40),
+            dark: NSColor.white.withAlphaComponent(0.40)
         )
 
         // MARK: EQ Spline Visualizer Tokens
@@ -169,15 +172,15 @@ enum DesignTokens {
         /// EQ 0 dB center reference baseline.
         static let eqZeroLine = dynamicColor(
             name: "eqZeroLine",
-            light: NSColor.black.withAlphaComponent(0.18),
-            dark: NSColor.white.withAlphaComponent(0.22)
+            light: NSColor.black.withAlphaComponent(0.15),
+            dark: NSColor.white.withAlphaComponent(0.20)
         )
 
         /// EQ subtle background grid lines.
         static let eqGridLine = dynamicColor(
             name: "eqGridLine",
-            light: NSColor.black.withAlphaComponent(0.06),
-            dark: NSColor.white.withAlphaComponent(0.07)
+            light: NSColor.black.withAlphaComponent(0.04),
+            dark: NSColor.white.withAlphaComponent(0.05)
         )
 
         // MARK: Menu/Picker
@@ -373,11 +376,11 @@ enum DesignTokens {
     // MARK: - Typography
 
     enum Typography {
-        /// Section header text (e.g., "OUTPUT DEVICES") - prominent and bold
-        static let sectionHeader = Font.system(size: 12, weight: .bold)
+        /// Section header text (e.g., "Apps") - Apple native style
+        static let sectionHeader = Font.system(size: 11, weight: .semibold)
 
-        /// Section header letter spacing (tighter at larger size)
-        static let sectionHeaderTracking: CGFloat = 1.2
+        /// Section header letter spacing
+        static let sectionHeaderTracking: CGFloat = 0.4
 
         /// App/device name in rows
         static let rowName = Font.system(size: 13, weight: .regular)
@@ -456,19 +459,19 @@ enum DesignTokens {
         /// Max height for scrollable content
         static let maxScrollHeight: CGFloat = 400
 
-        // MARK: Corner Radii (rounded style - 14pt)
+        // MARK: Corner Radii (Apple Native - 16pt / 14pt)
 
         /// Corner radius for popup
-        static let cornerRadius: CGFloat = 16
+        static let cornerRadius: CGFloat = 18
 
         /// Corner radius for grouped glass island cards
-        static let islandRadius: CGFloat = 12
+        static let islandRadius: CGFloat = 14
 
         /// Corner radius for row cards (glass bars)
         static let rowRadius: CGFloat = 10
 
         /// Corner radius for buttons/pickers
-        static let buttonRadius: CGFloat = 7
+        static let buttonRadius: CGFloat = 6
 
         /// App/device icon size
         static let iconSize: CGFloat = 22
@@ -476,42 +479,42 @@ enum DesignTokens {
         /// Small icon size
         static let iconSizeSmall: CGFloat = 14
 
-        // MARK: Slider Dimensions (Control Center capsule style)
+        // MARK: Slider Dimensions (Apple Control Center capsule style)
 
-        /// Slider capsule height
-        static let sliderCapsuleHeight: CGFloat = 22
+        /// Slider capsule height (sleek 18pt)
+        static let sliderCapsuleHeight: CGFloat = 18
 
         /// Slider capsule corner radius
-        static let sliderCapsuleRadius: CGFloat = 11
+        static let sliderCapsuleRadius: CGFloat = 9
 
         /// Slider track height (minimal legacy)
-        static let sliderTrackHeight: CGFloat = 4
+        static let sliderTrackHeight: CGFloat = 3
 
         /// Slider thumb width (pill shape)
-        static let sliderThumbWidth: CGFloat = 16
+        static let sliderThumbWidth: CGFloat = 14
 
         /// Slider thumb height (pill shape)
-        static let sliderThumbHeight: CGFloat = 10
+        static let sliderThumbHeight: CGFloat = 8
 
         /// Circular thumb size
-        static let sliderThumbSize: CGFloat = 12
+        static let sliderThumbSize: CGFloat = 10
 
         /// Minimum touch target
         static let minTouchTarget: CGFloat = 18
 
         /// Row content height
-        static let rowContentHeight: CGFloat = 30
+        static let rowContentHeight: CGFloat = 32
 
         // MARK: Component Widths
 
-        /// Slider width
-        static let sliderWidth: CGFloat = 145
+        /// Default slider width
+        static let sliderWidth: CGFloat = 115
 
         /// Minimum slider width
-        static let sliderMinWidth: CGFloat = 120
+        static let sliderMinWidth: CGFloat = 90
 
         /// Percentage text width (fixed to prevent layout shift)
-        static let percentageWidth: CGFloat = 38
+        static let percentageWidth: CGFloat = 34
 
         // MARK: VU Meter
 

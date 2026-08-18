@@ -139,30 +139,57 @@ extension AudioDeviceID {
     /// Pure name + transport → SF Symbol mapping, extracted from `suggestedIconSymbol()`
     /// so the user-visible device-name cascade is unit-testable without a live device.
     static func iconSymbol(forName name: String, transport: TransportType) -> String {
+        let lower = name.lowercased()
+
         // AirPods variants
-        if name.contains("AirPods Pro") { return "airpodspro" }
-        if name.contains("AirPods Max") { return "airpodsmax" }
-        if name.contains("AirPods") { return "airpods.gen3" }
+        if lower.contains("airpods pro") { return "airpodspro" }
+        if lower.contains("airpods max") { return "airpodsmax" }
+        if lower.contains("airpods") { return "airpods.gen3" }
 
         // HomePod variants
-        if name.contains("HomePod mini") { return "homepodmini" }
-        if name.contains("HomePod") { return "homepod" }
+        if lower.contains("homepod mini") { return "homepodmini.fill" }
+        if lower.contains("homepod") { return "homepod.fill" }
 
         // Apple TV
-        if name.contains("Apple TV") { return "appletv" }
+        if lower.contains("apple tv") { return "appletv.fill" }
 
         // Beats
-        if name.contains("Beats") { return "beats.headphones" }
+        if lower.contains("beats") { return "beats.headphones" }
         
+        // Headphones / Earphones / Headsets
+        if lower.contains("headphone") || lower.contains("earphone") || lower.contains("wh-1000") || lower.contains("qc35") || lower.contains("qc45") {
+            return "headphones"
+        }
+        
+        // Multi-Output / Aggregate devices
+        if lower.contains("multi-output") || lower.contains("aggregate") {
+            return "hifispeaker.2.fill"
+        }
+        
+        // Virtual devices / loopback
+        if lower.contains("blackhole") || lower.contains("soundflower") || lower.contains("loopback") || lower.contains("virtual") {
+            return "waveform"
+        }
+        
+        // Conferencing audio
+        if lower.contains("teams") || lower.contains("zoom") || lower.contains("discord") || lower.contains("skype") {
+            return "waveform.path.ecg"
+        }
+
         // Mac variants
-        if name.contains("Mac Studio") { return "macstudio.fill" }
-        if name.contains("Mac mini") { return "macmini.fill" }
-        if name.contains("MacBook") { return "macbook" }
-        if name.contains("iMac") { return "desktopcomputer" }
+        if lower.contains("mac studio") { return "macstudio.fill" }
+        if lower.contains("mac mini") { return "macmini.fill" }
+        if lower.contains("macbook") || lower.contains("built-in") || lower.contains("internal") { return "laptopcomputer" }
+        if lower.contains("imac") { return "desktopcomputer" }
         
         // Display speakers
-        if name.contains("Studio Display") { return "display" }
-        if name.contains("Pro Display XDR") { return "display" }
+        if lower.contains("studio display") || lower.contains("pro display") || lower.contains("display") || lower.contains("monitor") {
+            return "display"
+        }
+
+        // Speakers generic
+        if lower.contains("speaker") { return "speaker.wave.2.fill" }
+        if lower.contains("mic") { return "mic.fill" }
 
         // Fall back to transport type default
         return transport.defaultIconSymbol

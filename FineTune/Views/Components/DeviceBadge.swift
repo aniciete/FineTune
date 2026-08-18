@@ -20,35 +20,46 @@ struct DeviceBadge: View {
     /// the row's domain.
     var fallbackSymbol: String = "speaker.wave.2.fill"
 
-    private static let badgeSize: CGFloat = 28
-    private static let glyphSize: CGFloat = 20
+    private static let badgeSize: CGFloat = 26
+    private static let cornerRadius: CGFloat = 6.5
+    private static let glyphSize: CGFloat = 13
 
     var body: some View {
         ZStack {
-            // Background fill — accent gradient when selected, mono fill otherwise.
+            // Background fill — accent gradient when selected, mono glass fill otherwise.
             if isSelected {
-                Circle()
+                RoundedRectangle(cornerRadius: Self.cornerRadius, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [
                                 Color.accentColor,
                                 Color.accentColor.opacity(0.85)
                             ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
                     )
                     .overlay {
-                        Circle()
-                            .strokeBorder(Color.white.opacity(0.25), lineWidth: 0.75)
+                        RoundedRectangle(cornerRadius: Self.cornerRadius, style: .continuous)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.35),
+                                        Color.white.opacity(0.10)
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ),
+                                lineWidth: 0.75
+                            )
                     }
                     .shadow(color: Color.accentColor.opacity(0.35), radius: 3, x: 0, y: 1)
             } else {
-                Circle()
-                    .fill(DesignTokens.Colors.deviceBadgeMonoFill)
+                RoundedRectangle(cornerRadius: Self.cornerRadius, style: .continuous)
+                    .fill(DesignTokens.Colors.islandBackground)
                     .overlay {
-                        Circle()
-                            .strokeBorder(Color.primary.opacity(0.04), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: Self.cornerRadius, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.08), lineWidth: 0.5)
                     }
             }
 
@@ -60,6 +71,7 @@ struct DeviceBadge: View {
                         .aspectRatio(contentMode: .fit)
                 } else {
                     Image(systemName: fallbackSymbol)
+                        .font(.system(size: Self.glyphSize, weight: .medium))
                         .symbolRenderingMode(.hierarchical)
                 }
             }
@@ -74,7 +86,7 @@ struct DeviceBadge: View {
     private var glyphForeground: Color {
         isSelected
             ? Color.white
-            : DesignTokens.Colors.deviceBadgeMonoForeground
+            : DesignTokens.Colors.textSecondary
     }
 }
 

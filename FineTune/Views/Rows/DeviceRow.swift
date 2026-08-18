@@ -147,13 +147,36 @@ struct DeviceRow: View {
             // handles tap-to-set-default.
             DeviceBadge(icon: displayIcon, isSelected: isDefault)
 
-            // Device name + optional AutoEQ profile subtitle + AutoEQ picker
-            HStack(spacing: DesignTokens.Spacing.xs) {
+            // Device name + optional AutoEQ indicator + optional subtitle
+            HStack(spacing: 6) {
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(device.name)
-                        .font(DesignTokens.Typography.rowName)
-                        .lineLimit(1)
-                        .help(device.name)
+                    HStack(spacing: 5) {
+                        Text(device.name)
+                            .font(DesignTokens.Typography.rowName)
+                            .lineLimit(1)
+                            .help(device.name)
+
+                        // AutoEQ picker right beside the device name
+                        if device.supportsAutoEQ,
+                           let profileManager = autoEQProfileManager,
+                           let onSelect = onAutoEQSelect,
+                           let onImport = onAutoEQImport {
+                            AutoEQPicker(
+                                profileManager: profileManager,
+                                profileName: autoEQProfileName,
+                                selection: autoEQSelection,
+                                favoriteIDs: autoEQFavoriteIDs,
+                                onSelect: onSelect,
+                                onImport: onImport,
+                                onToggleFavorite: { id in onAutoEQToggleFavorite?(id) },
+                                importError: autoEQImportError,
+                                isCorrectionEnabled: autoEQEnabled,
+                                onCorrectionToggle: onAutoEQToggle,
+                                preampEnabled: autoEQPreampEnabled,
+                                onPreampToggle: onAutoEQPreampToggle
+                            )
+                        }
+                    }
 
                     if let subtitle = Self.autoEQSubtitle(profileName: autoEQProfileName, isEnabled: autoEQEnabled) {
                         Text(subtitle)
@@ -164,27 +187,6 @@ struct DeviceRow: View {
                 }
 
                 Spacer(minLength: 0)
-
-                // AutoEQ picker inside the name area so slider length stays consistent
-                if device.supportsAutoEQ,
-                   let profileManager = autoEQProfileManager,
-                   let onSelect = onAutoEQSelect,
-                   let onImport = onAutoEQImport {
-                    AutoEQPicker(
-                        profileManager: profileManager,
-                        profileName: autoEQProfileName,
-                        selection: autoEQSelection,
-                        favoriteIDs: autoEQFavoriteIDs,
-                        onSelect: onSelect,
-                        onImport: onImport,
-                        onToggleFavorite: { id in onAutoEQToggleFavorite?(id) },
-                        importError: autoEQImportError,
-                        isCorrectionEnabled: autoEQEnabled,
-                        onCorrectionToggle: onAutoEQToggle,
-                        preampEnabled: autoEQPreampEnabled,
-                        onPreampToggle: onAutoEQPreampToggle
-                    )
-                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 

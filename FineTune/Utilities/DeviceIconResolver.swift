@@ -16,6 +16,13 @@ enum DeviceIconResolver {
            let image = NSImage(systemSymbolName: overrideSymbol, accessibilityDescription: deviceName) {
             return image
         }
+
+        // Always resolve to a crisp native Apple SF Symbol for the device name
+        let symbol = AudioDeviceID.iconSymbol(forName: deviceName, transport: .unknown)
+        if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: deviceName) {
+            return image
+        }
+
         return automatic
     }
 }

@@ -143,18 +143,18 @@ struct DevicePicker: View {
     @ViewBuilder
     private var singleModeIcon: some View {
         if isFollowingDefault {
-            Image(systemName: "globe")
-                .font(.system(size: 15))
+            Image(systemName: "arrow.triangle.branch")
+                .font(.system(size: 12, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
         } else if let device = devices.first(where: { $0.uid == selectedDeviceUID }),
                   let icon = displayIcon(for: device) {
             Image(nsImage: icon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 20, height: 20)
+                .frame(width: 14, height: 14)
         } else {
-            Image(systemName: "speaker.wave.2")
-                .font(.system(size: 15))
+            Image(systemName: "speaker.wave.2.fill")
+                .font(.system(size: 12, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
         }
     }

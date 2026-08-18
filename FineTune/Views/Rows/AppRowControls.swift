@@ -66,7 +66,7 @@ struct AppRowControls: View {
     }
 
     var body: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
+        HStack(spacing: 5) {
             // Mute button
             MuteButton(isMuted: showMutedIcon, levelFraction: sliderValue) {
                 if showMutedIcon {
@@ -89,11 +89,11 @@ struct AppRowControls: View {
                     }
                 }
             )
-            .frame(width: DesignTokens.Dimensions.sliderWidth)
+            .frame(width: 110)
             .opacity(showMutedIcon ? 0.5 : 1.0)
             .scrollWheelStep(sliderBinding, in: 0.0...1.0)
 
-            // Editable volume percentage (shows slider position, not raw gain)
+            // Editable volume percentage
             EditablePercentage(
                 percentage: Binding(
                     get: {
@@ -109,9 +109,10 @@ struct AppRowControls: View {
                 isRowFocused: isRowFocused
             )
 
-            // Boost chevrons
+            // Boost indicator
             BoostChevrons(level: boost, onTap: { onBoostChange(boost.next) })
 
+            // Routing picker
             DevicePicker(
                 devices: devices,
                 deviceIconOverrides: deviceIconOverrides,
@@ -129,7 +130,7 @@ struct AppRowControls: View {
                 triggerStyle: .iconOnly
             )
 
-            // EQ button
+            // EQ toggle button
             Button {
                 onEQToggle()
             } label: {
@@ -142,10 +143,10 @@ struct AppRowControls: View {
                         .opacity(isEQExpanded ? 1 : 0)
                         .rotationEffect(.degrees(isEQExpanded ? 0 : -90))
                 }
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 11.5, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(eqButtonColor)
-                .frame(width: 24, height: 24)
+                .frame(width: 22, height: 22)
                 .background {
                     RoundedRectangle(cornerRadius: DesignTokens.Dimensions.buttonRadius)
                         .fill(isEQButtonHovered || isEQExpanded ? DesignTokens.Colors.hoverSurface : Color.clear)

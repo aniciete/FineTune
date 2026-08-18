@@ -65,19 +65,20 @@ struct AutoEQPicker: View {
                 isExpanded.toggle()
             }
         } label: {
-            Image(systemName: "wand.and.sparkles")
-                .font(.system(size: 16))
+            Image(systemName: "sparkles")
+                .font(.system(size: 11, weight: .medium))
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(iconColor)
-                .frame(
-                    minWidth: DesignTokens.Dimensions.minTouchTarget,
-                    minHeight: DesignTokens.Dimensions.minTouchTarget
-                )
+                .frame(width: 18, height: 18)
+                .background {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(isButtonHovered || isExpanded ? DesignTokens.Colors.hoverSurface : Color.clear)
+                }
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .onHover { isButtonHovered = $0 }
-        .help(isExpanded ? "Close AutoEQ" : "AutoEQ correction")
+        .help(isExpanded ? "Close AutoEQ" : "AutoEQ headphone correction")
         .animation(DesignTokens.Animation.hover, value: isButtonHovered)
     }
 

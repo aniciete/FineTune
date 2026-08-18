@@ -114,7 +114,8 @@ struct InactiveAppRow: View {
                 Image(nsImage: icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: DesignTokens.Dimensions.rowContentHeight - 4, height: DesignTokens.Dimensions.rowContentHeight - 4)
+                    .frame(width: 22, height: 22)
+                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
 
                 // App name + optional routing subtitle (hidden when the app is on
                 // system default).

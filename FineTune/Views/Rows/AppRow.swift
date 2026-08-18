@@ -116,8 +116,9 @@ struct AppRow: View {
                     Image(nsImage: app.icon)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: DesignTokens.Dimensions.rowContentHeight - 4, height: DesignTokens.Dimensions.rowContentHeight - 4)
-                        .opacity(isIconHovered ? 0.7 : 1.0)
+                        .frame(width: 22, height: 22)
+                        .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                        .opacity(isIconHovered ? 0.8 : 1.0)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Open \(app.name)")
